@@ -2,19 +2,16 @@ var tab = chrome.devtools.inspectedWindow.tabId;
 
 function handleResponse(result, isException) {
 	if(isException != undefined) {
-        console.warn("There was some error, try reloading the Siebel DevTools extension.");
+		chrome.devtools.inspectedWindow.eval("console.warn('There was some error, try reloading the Siebel DevTools extension.')");
+		let app = document.getElementById("app");
+		let elem = document.createElement("blockquote");
+		elem.innerText = "This doesn't seem to be a Siebel Web Application.";
+		app.appendChild(elem);
     } else {
 		try {
-			/*let keys = Object.keys(result);
-			for (let i=0; i<keys.length; i++) {
-				let elem = document.createElement("div");
-				elem.innerText = result[keys[i]];
-				document.body.append(elem);
-			}*/
 			let activeView = result;
 			if(activeView != null) {
 				chrome.devtools.inspectedWindow.eval("SiebelApp.S_App.GetActiveView().GetName()", (s) => {
-					//console.log(s);
 					let app = document.getElementById("app");
 					let viewDetail = document.createElement("details");
 					viewDetail.id = "view";
@@ -44,7 +41,6 @@ function handleResponse(result, isException) {
 						p.id = appletDetail.id + "-p-" + i;
 						
 						appletDetail.appendChild(appletSumm);
-						//p.appendChild(recordTable);
 						appletDetail.appendChild(p);
 						view.appendChild(appletDetail);
 					}
@@ -52,9 +48,7 @@ function handleResponse(result, isException) {
 				
 				var applets = document.querySelectorAll("applet");
 				applets.forEach((a) => {
-					//var appletNum = a.id.split("-")[1];
-					//var pToUpdate = document.getElementById(a.id + 
-					
+					// TODO: get applet's child p's ID
 				});
 			}
 		} catch(e) {
@@ -76,11 +70,3 @@ var refreshButton = document.getElementById("refresh");
 refreshButton.addEventListener("click", () => {
 	location.reload();
 });
-// run this in console:
-/*
-document.myobject = {};
-document.myobject["key1"] = "value1";
-document.myobject["key2"] = "value2";
-document.myobject["key3"] = {"key31": "value31", "key32": "value32", "key33": "value33"};
-document.myobject["key4"] = "value4";
-*/
