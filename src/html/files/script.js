@@ -1,5 +1,4 @@
 function handleResponse(result, isException) {
-    debugger;
 	if(isException != undefined) {
         console.warn("There was some error, try reloading the Siebel DevTools extension.");
     } else {
