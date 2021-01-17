@@ -61,3 +61,6 @@ A Chrome DevTools extension for Siebel OpenUI developers.
 - [ ] Add another side panel for client-side simulation
     - [ ] A form for fetching required <code>Profile Attribute</code>
     - [ ] Simulate a <code>Business Service</code> exposed to client
+
+---
+<p align="center">Made with ❤ in India</p>
