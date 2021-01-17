@@ -42,6 +42,22 @@ A Chrome DevTools extension for Siebel OpenUI developers.
 ---
 
 ### More Info
-
-- Siebel DevTools uses class-less CSS framework [Water.css](https://github.com/kognise/water.css)
+#### Limitations
 - Siebel DevTools currently only crawls till applet layer.
+- It is not published on Chrome's Web Store. _(yet?)_
+#### How it works?
+- Siebel DevTools uses a Promise-Resolve arch style.
+- It uses class-less CSS framework [Water.css](https://github.com/kognise/water.css)
+#### TODOs
+- [x] Initial Release / Proof of Concept
+- [x] Crawl till applets
+- [ ] On click of applet summary, fetch applet level details
+    - [ ] Applet's title
+    - [ ] Applet's current record _(form applet only)_
+    - [ ] Applet's record set _(list applet only)_
+    - [ ] Applet's <code>BusComp</code> name
+- [ ] Add a side panel proof of concept
+    - [ ] Add details about the current click <code>$0</code> on inspected page
+- [ ] Add another side panel for client-side simulation
+    - [ ] A form for fetching required <code>Profile Attribute</code>
+    - [ ] Simulate a <code>Business Service</code> exposed to client
