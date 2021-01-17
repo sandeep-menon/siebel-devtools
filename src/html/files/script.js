@@ -11,45 +11,55 @@ function handleResponse(result, isException) {
 		try {
 			let activeView = result;
 			if(activeView != null) {
-				chrome.devtools.inspectedWindow.eval("SiebelApp.S_App.GetActiveView().GetName()", (s) => {
+				let viewPromise = new Promise(function(resolve, reject) {
+					chrome.devtools.inspectedWindow.eval("SiebelApp.S_App.GetActiveView().GetName()", (s) => {
+						return resolve(s);
+					});
+				}).then((value) => {
 					let app = document.getElementById("app");
 					let viewDetail = document.createElement("details");
 					viewDetail.id = "view";
 					let viewSumm = document.createElement("summary");
-					let p = document.createElement("p");
-					p.id = "viewp";
-					p.innerText = "";
-					viewSumm.innerText = s;
+					let viewP = document.createElement("p");
+					viewP.id = "viewp";
+					viewSumm.innerText = value;
 					viewDetail.appendChild(viewSumm);
-					viewDetail.appendChild(p);
+					viewDetail.appendChild(viewP);
 					app.appendChild(viewDetail);
+					
+					// getting view details
+					let busObjPromise = new Promise(function(resolve, reject) {
+						chrome.devtools.inspectedWindow.eval("SiebelApp.S_App.GetActiveView().GetBusObj().GetName()", (s) => {
+							return resolve(s);
+						});
+					}).then((value) => {
+						let viewp = document.getElementById("viewp");
+						viewp.innerHTML = "<strong>BusObject: </strong>" + value;
+						let appletPromise = new Promise(function(resolve, reject) {
+							chrome.devtools.inspectedWindow.eval("Object.keys(SiebelApp.S_App.GetActiveView().GetAppletMap())", (s) => {
+								return resolve(s);
+							});
+						}).then((value) => {
+							let appletKeys = value;
+							for(var i=0; i<appletKeys.length; i++) {
+								let view = document.getElementById("view");
+								let appletDetail = document.createElement("details");
+								appletDetail.id = "applet-" + i;
+								appletDetail.classList.add("applet");
+								let appletSumm = document.createElement("summary");
+								appletSumm.innerText = appletKeys[i];
+								var appletP = document.createElement("p");
+								appletP.id = appletDetail.id + "-p";
+								appletDetail.appendChild(appletSumm);
+								appletDetail.appendChild(appletP);
+								view.appendChild(appletDetail);
+							}
+						});
+					});
 				});
-				chrome.devtools.inspectedWindow.eval("SiebelApp.S_App.GetActiveView().GetBusObj().GetName()", (s) => {
-					let viewp = document.getElementById("viewp");
-					viewp.innerHTML = "<strong>BusObject: </strong>" + s;
-				});
-				chrome.devtools.inspectedWindow.eval("SiebelApp.S_App.GetActiveView().GetAppletMap()", (s) => {
-					let objKeys = Object.keys(s);
-					for(var i=0; i<objKeys.length; i++) {
-						var view = document.getElementById("view");
-						var appletDetail = document.createElement("details");
-						appletDetail.id = "applet-" + i;
-						appletDetail.classList.add("applet");
-						var appletSumm = document.createElement("summary");
-						appletSumm.innerText = objKeys[i];
-						var p = document.createElement("p");
-						p.id = appletDetail.id + "-p-" + i;
-						
-						appletDetail.appendChild(appletSumm);
-						appletDetail.appendChild(p);
-						view.appendChild(appletDetail);
-					}
-				});
-				
-				var applets = document.querySelectorAll("applet");
-				applets.forEach((a) => {
-					// TODO: get applet's child p's ID
-				});
+				// TODO:
+				// onclick of applet summary, fetch that applets details
+				// like RecordSet, BusCompName etc.
 			}
 		} catch(e) {
 			console.error("There was some error, try reloading the Siebel DevTools extension.");
